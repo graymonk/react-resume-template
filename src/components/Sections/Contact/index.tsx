@@ -2,7 +2,8 @@ import {DevicePhoneMobileIcon, EnvelopeIcon, MapPinIcon} from '@heroicons/react/
 import classNames from 'classnames';
 import {FC, memo} from 'react';
 
-import {contact, SectionId} from '../../../data/data';
+import {useLanguage} from '../../../contexts/LanguageContext';
+import {getData, SectionId} from '../../../data';
 import {ContactType, ContactValue} from '../../../data/dataDef';
 import FacebookIcon from '../../Icon/FacebookIcon';
 import GithubIcon from '../../Icon/GithubIcon';
@@ -24,6 +25,8 @@ const ContactValueMap: Record<ContactType, ContactValue> = {
 };
 
 const Contact: FC = memo(() => {
+  const {language} = useLanguage();
+  const {contact} = getData(language);
   const {headerText, description, items} = contact;
   return (
     <Section className="bg-neutral-800" sectionId={SectionId.Contact}>

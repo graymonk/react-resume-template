@@ -3,11 +3,14 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import {FC, memo} from 'react';
 
-import {heroData, SectionId} from '../../data/data';
+import {useLanguage} from '../../contexts/LanguageContext';
+import {getData, SectionId} from '../../data';
 import Section from '../Layout/Section';
 import Socials from '../Socials';
 
 const Hero: FC = memo(() => {
+  const {language} = useLanguage();
+  const {heroData} = getData(language);
   const {imageSrc, name, description, actions} = heroData;
 
   return (

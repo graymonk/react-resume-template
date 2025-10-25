@@ -4,12 +4,28 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import {FC, Fragment, memo, useCallback, useMemo, useState} from 'react';
 
-import {SectionId} from '../../data/data';
+import {Language, useLanguage} from '../../contexts/LanguageContext';
+import {SectionId} from '../../data';
 import {useNavObserver} from '../../hooks/useNavObserver';
 
 export const headerID = 'headerNav';
 
+const getSectionLabel = (section: SectionId, language: Language): string => {
+  const labels: Record<SectionId, Record<Language, string>> = {
+    [SectionId.Hero]: {en: 'Hero', zh: '首页'},
+    [SectionId.About]: {en: 'About', zh: '关于我'},
+    [SectionId.Resume]: {en: 'Resume', zh: '简历'},
+    [SectionId.Portfolio]: {en: 'Portfolio', zh: '作品集'},
+    [SectionId.Testimonials]: {en: 'Testimonials', zh: '推荐'},
+    [SectionId.Contact]: {en: 'Contact', zh: '联系'},
+    [SectionId.Skills]: {en: 'Skills', zh: '技能'},
+    [SectionId.Stats]: {en: 'Stats', zh: '统计'},
+  };
+  return labels[section]?.[language] || section;
+};
+
 const Header: FC = memo(() => {
+  const {language} = useLanguage();
   const [currentSection, setCurrentSection] = useState<SectionId | null>(null);
   const navSections = useMemo(
     () => [SectionId.About, SectionId.Resume, SectionId.Portfolio, SectionId.Testimonials, SectionId.Contact],
@@ -24,14 +40,14 @@ const Header: FC = memo(() => {
 
   return (
     <>
-      <MobileNav currentSection={currentSection} navSections={navSections} />
-      <DesktopNav currentSection={currentSection} navSections={navSections} />
+      <MobileNav currentSection={currentSection} language={language} navSections={navSections} />
+      <DesktopNav currentSection={currentSection} language={language} navSections={navSections} />
     </>
   );
 });
 
-const DesktopNav: FC<{navSections: SectionId[]; currentSection: SectionId | null}> = memo(
-  ({navSections, currentSection}) => {
+const DesktopNav: FC<{navSections: SectionId[]; currentSection: SectionId | null; language: Language}> = memo(
+  ({navSections, currentSection, language}) => {
     const baseClass =
       '-m-1.5 p-1.5 rounded-md font-bold first-letter:uppercase hover:transition-colors hover:duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 sm:hover:text-orange-500 text-neutral-100';
     const activeClass = classNames(baseClass, 'text-orange-500');
@@ -45,6 +61,7 @@ const DesktopNav: FC<{navSections: SectionId[]; currentSection: SectionId | null
               current={section === currentSection}
               inactiveClass={inactiveClass}
               key={section}
+              language={language}
               section={section}
             />
           ))}
@@ -54,8 +71,8 @@ const DesktopNav: FC<{navSections: SectionId[]; currentSection: SectionId | null
   },
 );
 
-const MobileNav: FC<{navSections: SectionId[]; currentSection: SectionId | null}> = memo(
-  ({navSections, currentSection}) => {
+const MobileNav: FC<{navSections: SectionId[]; currentSection: SectionId | null; language: Language}> = memo(
+  ({navSections, currentSection, language}) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const toggleOpen = useCallback(() => {
@@ -103,6 +120,7 @@ const MobileNav: FC<{navSections: SectionId[]; currentSection: SectionId | null}
                       current={section === currentSection}
                       inactiveClass={inactiveClass}
                       key={section}
+                      language={language}
                       onClick={toggleOpen}
                       section={section}
                     />
@@ -122,15 +140,16 @@ const NavItem: FC<{
   current: boolean;
   activeClass: string;
   inactiveClass: string;
+  language: Language;
   onClick?: () => void;
-}> = memo(({section, current, inactiveClass, activeClass, onClick}) => {
+}> = memo(({section, current, inactiveClass, activeClass, language, onClick}) => {
   return (
     <Link
       className={classNames(current ? activeClass : inactiveClass)}
       href={`/#${section}`}
       key={section}
       onClick={onClick}>
-      {section}
+      {getSectionLabel(section as SectionId, language)}
     </Link>
   );
 });

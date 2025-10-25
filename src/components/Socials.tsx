@@ -1,8 +1,12 @@
 import {FC, memo} from 'react';
 
-import {socialLinks} from '../data/data';
+import {useLanguage} from '../contexts/LanguageContext';
+import {getData} from '../data';
 
 const Socials: FC = memo(() => {
+  const {language} = useLanguage();
+  const {socialLinks} = getData(language);
+
   return (
     <>
       {socialLinks.map(({label, Icon, href}) => (

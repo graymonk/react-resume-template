@@ -2,7 +2,8 @@ import classNames from 'classnames';
 import {FC, memo, UIEventHandler, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 import {isApple, isMobile} from '../../config';
-import {SectionId, testimonial} from '../../data/data';
+import {useLanguage} from '../../contexts/LanguageContext';
+import {getData, SectionId} from '../../data';
 import {Testimonial} from '../../data/dataDef';
 import useInterval from '../../hooks/useInterval';
 import useWindow from '../../hooks/useWindow';
@@ -19,6 +20,8 @@ const Testimonials: FC = memo(() => {
 
   const {width} = useWindow();
 
+  const {language} = useLanguage();
+  const {testimonial} = getData(language);
   const {imageSrc, testimonials} = testimonial;
 
   const resolveSrc = useMemo(() => {
